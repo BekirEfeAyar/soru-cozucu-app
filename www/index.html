@@ -28,6 +28,8 @@ button{font-family:inherit}
 select,textarea,input[type=text],input[type=password]{width:100%;background:#10152a;border:1px solid var(--line);color:var(--txt);border-radius:12px;padding:12px;font-size:15px;outline:none}
 select:focus,textarea:focus,input:focus{border-color:var(--acc)}
 textarea{min-height:70px;resize:vertical}
+#webPrompt{min-height:120px}
+#pastedAnswer{min-height:90px}
 label.lbl{font-size:13px;color:var(--mut);display:block;margin:10px 0 6px}
 #result{display:none;white-space:normal;line-height:1.65;font-size:15px}
 #result.show{display:block}
@@ -108,8 +110,34 @@ a{color:var(--acc)}
 </select>
 </div>
 
-<div class="card">
-<h2>3 • Çöz</h2>
+<div class="card" id="webCard">
+<h2>3 • Web'de Sor (API anahtarı gerekmez)</h2>
+<div class="hint">Uygulama soruyu ve yapıştırılacak metni hazırlar. Cevabı Gemini / ChatGPT / Copilot'un kendi sitesinde alırsın (kendi hesabınla giriş yaparsın). Bu yöntem otomatik değildir: fotoğrafı ekleyip metni yapıştırman gerekir.</div>
+<div class="btnrow">
+<button class="btn" id="btnPrepareWeb">📝 Soruyu Hazırla</button>
+</div>
+<label class="lbl">Yapıştırılacak metin (otomatik oluşur)</label>
+<textarea id="webPrompt" placeholder="Önce 1. adımdan fotoğraf ekle, sonra Soruyu Hazırla'ya bas."></textarea>
+<div class="row">
+<button class="btn ghost small" id="btnCopyWeb">📋 Metni Kopyala</button>
+<button class="btn ghost small" id="btnShareQA">📤 Soru + Fotoğrafı Paylaş</button>
+<button class="btn ghost small" id="btnDownloadImg">⬇️ Fotoğrafı İndir</button>
+</div>
+<div class="row">
+<button class="btn ghost small" data-open="https://gemini.google.com/app">Gemini'yi Aç</button>
+<button class="btn ghost small" data-open="https://chat.openai.com/">ChatGPT'yi Aç</button>
+<button class="btn ghost small" data-open="https://copilot.microsoft.com/">Copilot'u Aç</button>
+</div>
+<div class="hint" id="webInfo"></div>
+<div class="kutu">Adımlar: 1) Soruyu Hazırla 2) Metni Kopyala 3) Fotoğrafı Paylaş veya İndir 4) Açtığın sitede fotoğrafı ekle + metni yapıştır 5) Gelen cevabı aşağıya yapıştırıp Kaydet.</div>
+<label class="lbl">Yapay zekadan gelen cevap (yapıştır)</label>
+<textarea id="pastedAnswer" placeholder="Sitedeki cevabı kopyala, buraya yapıştır..."></textarea>
+<div class="row"><button class="btn small" id="btnSavePasted" style="flex:1">💾 Cevabı Kaydet ve Göster</button></div>
+</div>
+
+<div class="card" id="apiCard">
+<h2>4 • API ile Otomatik Çöz (isteğe bağlı)</h2>
+<div class="hint">API anahtarın varsa tek dokunuşla otomatik çözer. Yoksa yukarıdaki Web'de Sor yeterlidir.</div>
 <button class="btn" id="btnSolve">✨ ÇÖZÜMÜ GETİR</button>
 <div class="err" id="err"></div>
 <div style="margin-top:14px" id="loading" class="loading hidden"><div class="spin"></div><div id="loadingTxt">Yapay zekaya gönderiliyor...</div></div>
@@ -132,7 +160,7 @@ a{color:var(--acc)}
 <div class="modal" id="settingsModal">
 <div class="sheet">
 <h3>⚙️ Yapay Zeka Ayarı (ücretsiz)</h3>
-<div style="font-size:13px;color:var(--mut)">Uygulamanın kendisi ücretsiz. Çözüm için <b>ücretsiz bir API anahtarı</b> girmen yeterli (1 dakikalık iş, bir kez yapılır).</div>
+<div style="font-size:13px;color:var(--mut)">API yöntemi isteğe bağlıdır. Anahtarsız kullanmak için 3. adımdaki <b>Web'de Sor</b> yeterlidir. Otomatik çözüm istersen buraya <b>ücretsiz bir API anahtarı</b> girmen yeterli (1 dakikalık iş, bir kez yapılır).</div>
 <label class="lbl">Servis</label>
 <select id="provider">
 <option value="gemini">Google Gemini (önerilen • ücretsiz)</option>
@@ -180,7 +208,7 @@ a{color:var(--acc)}
 </div>
 </div>
 
-<footer>📱 SoruÇöz v1.1 • İnternet gerekli (yapay zeka için) • Veriler sadece telefonunda saklanır<br>Ücretsiz anahtarlar: aistudio.google.com • enter.pollinations.ai • openrouter.ai</footer>
+<footer>📱 SoruÇöz v1.2 • API'siz Web'de Sor desteklenir • Veriler sadece telefonunda saklanır<br>Web: gemini.google.com • chat.openai.com • copilot.microsoft.com</footer>
 
 <script>
 const $=id=>document.getElementById(id);
@@ -212,8 +240,8 @@ $("btnChoiceClose").onclick=closeChoice;
 $("choiceModal").addEventListener("click",e=>{if(e.target===$("choiceModal"))closeChoice()});
 $("btnChoiceOk").onclick=()=>{LS.set("sq_sinif",$("sinifM").value);LS.set("sq_ders",$("dersM").value);
 if($("sinif"))$("sinif").value=$("sinifM").value;if($("ders"))$("ders").value=$("dersM").value;
-closeChoice();hideErr();$("imgInfo").textContent="✅ Fotoğraf hazır ("+$("sinifM").value+" • "+$("dersM").value+"). ÇÖZ'e bas.";
-document.querySelectorAll(".card")[2].scrollIntoView({behavior:"smooth"});};
+closeChoice();hideErr();$("imgInfo").textContent="✅ Fotoğraf hazır ("+$("sinifM").value+" • "+$("dersM").value+"). 3. adımdan Web'de Sor'a geç.";
+$("webCard").scrollIntoView({behavior:"smooth"});};
 if($("sinif"))$("sinif").onchange=e=>LS.set("sq_sinif",e.target.value);
 if($("ders"))$("ders").onchange=e=>LS.set("sq_ders",e.target.value);
 loadChoice();
@@ -293,13 +321,40 @@ function renderHist(){const box=$("histList");let h=[];try{h=JSON.parse(LS.get("
 box.innerHTML="";h.forEach((it,i)=>{const d=document.createElement("div");d.className="hist-item";
 d.innerHTML=(it.thumb?'<img src="'+it.thumb+'">':"")+'<div><div class="t"><b>'+esc((it.sinif?it.sinif+" • ":"")+it.ders)+'</b> • '+new Date(it.t).toLocaleString("tr-TR")+'</div><div class="d">'+esc((it.ek||it.ans||"").slice(0,80))+'</div></div><button class="del">×</button>';
 d.onclick=e=>{if(e.target.className==="del"){h.splice(i,1);LS.set("sq_hist",JSON.stringify(h));renderHist();return;}
-lastAnswer=it.ans;const {html,ans}=md(it.ans);$("result").innerHTML='<span class="badge">📚 Geçmişten</span><div>'+html+'</div>';$("result").classList.add("show");$("afterBtns").classList.remove("hidden");window.scrollTo({top:0,behavior:"smooth"});document.querySelectorAll(".card")[2].scrollIntoView();};
+lastAnswer=it.ans;const {html,ans}=md(it.ans);$("result").innerHTML='<span class="badge">📚 Geçmişten</span><div>'+html+'</div>';$("result").classList.add("show");$("afterBtns").classList.remove("hidden");$("result").scrollIntoView({behavior:"smooth",block:"center"});};
 box.appendChild(d);});}
 $("btnClearHist").onclick=()=>{LS.del("sq_hist");renderHist()};
 $("btnNew").onclick=()=>{imgDataUrl=null;$("preview").src="";$("preview").classList.add("hidden");$("photoEmpty").classList.remove("hidden");$("btnClearImg").classList.add("hidden");$("ekmetin").value="";$("result").classList.remove("show");$("afterBtns").classList.add("hidden");hideErr();window.scrollTo({top:0,behavior:"smooth"})};
 $("btnCopy").onclick=async()=>{try{await navigator.clipboard.writeText(lastAnswer);$("btnCopy").textContent="✅ Kopyalandı"}catch(e){const ta=document.createElement("textarea");ta.value=lastAnswer;document.body.appendChild(ta);ta.select();document.execCommand("copy");ta.remove();}setTimeout(()=>$("btnCopy").textContent="📋 Kopyala",1500)};
 $("btnShare").onclick=async()=>{if(navigator.share){try{await navigator.share({title:"SoruÇöz",text:lastAnswer})}catch(e){}}else{$("btnCopy").click()}};
 $("btnSpeak").onclick=()=>{try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(lastAnswer.replace(/[#*`]/g,""));u.lang="tr-TR";speechSynthesis.speak(u);}catch(e){showErr("Sesli okuma bu cihazda desteklenmiyor.")}};
+
+// API'siz Web'de Sor akışı: metni hazırla, paylaş, siteyi aç, cevabı yapıştırıp kaydet
+function webInfo(t){$("webInfo").textContent=t;}
+$("btnPrepareWeb").onclick=()=>{hideErr();const ek=$("ekmetin").value.trim();
+if(!imgDataUrl&&!ek){webInfo("Önce 1. adımdan fotoğraf ekle ya da 2. adıma soru metni yaz.");return;}
+$("webPrompt").value=buildPrompt();
+webInfo("Hazır. Sıradaki: Metni Kopyala, sonra fotoğrafı Paylaş/İndir.");};
+$("btnCopyWeb").onclick=async()=>{const t=$("webPrompt").value.trim();if(!t){webInfo("Önce Soruyu Hazırla'ya bas.");return;}
+try{await navigator.clipboard.writeText(t);webInfo("Metin kopyalandı. Sitede fotoğrafı ekleyip yapıştır.");}catch(e){$("webPrompt").select();document.execCommand("copy");webInfo("Metin seçildi, kopyala.");}};
+async function imgFile(){const r=await fetch(imgDataUrl);const b=await r.blob();return new File([b],"soru.jpg",{type:"image/jpeg"});}
+$("btnShareQA").onclick=async()=>{const t=$("webPrompt").value.trim()||buildPrompt();
+try{
+if(imgDataUrl&&(navigator.canShare&&navigator.canShare({files:[await imgFile()]}))){await navigator.share({files:[await imgFile()],title:"SoruÇöz",text:t});webInfo("Paylaşım açıldı. Hedef olarak Gemini/ChatGPT uygulamasını seçebilirsin.");return;}
+if(navigator.share){await navigator.share({title:"SoruÇöz",text:t});webInfo("Paylaşım açıldı.");return;}
+webInfo("Bu cihaz paylaşımı desteklemiyor. Metni Kopyala + Fotoğrafı İndir kullan.");
+}catch(e){webInfo("Paylaşım iptal edildi.");}};
+$("btnDownloadImg").onclick=()=>{if(!imgDataUrl){webInfo("İndirilecek fotoğraf yok.");return;}
+const a=document.createElement("a");a.href=imgDataUrl;a.download="soru.jpg";document.body.appendChild(a);a.click();a.remove();webInfo("Fotoğraf indirildi. Sitede dosya ekle bölümünden seç.");};
+document.querySelectorAll("[data-open]").forEach(b=>{b.onclick=()=>{const url=b.getAttribute("data-open");
+const a=document.createElement("a");a.href=url;a.target="_blank";a.rel="noopener";document.body.appendChild(a);a.click();a.remove();
+webInfo("Site harici tarayıcıda açıldı. Fotoğrafı ekleyip metni yapıştır, cevabı alıp aşağıya kaydet.");};});
+$("btnSavePasted").onclick=()=>{hideErr();const t=$("pastedAnswer").value.trim();if(!t){webInfo("Önce sitedeki cevabı buraya yapıştır.");return;}
+lastAnswer=t;const r=md(t);
+const sinifLbl=(($("sinif")&&$("sinif").value)||LS.get("sq_sinif","")),dersLbl=(($("ders")&&$("ders").value)||LS.get("sq_ders","Genel"));
+$("result").innerHTML='<span class="badge">🌐 Web cevabı • '+esc(sinifLbl+" • "+dersLbl)+'</span><div>'+r.html+'</div>'+(r.ans?'<div class="answerbox">🏁 '+esc(r.ans)+'</div>':"");
+$("result").classList.add("show");$("afterBtns").classList.remove("hidden");saveHist(t);
+$("result").scrollIntoView({behavior:"smooth",block:"center"});};
 renderHist();
 </script>
 </body>

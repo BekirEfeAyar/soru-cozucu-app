@@ -1,11 +1,12 @@
 # SoruÇöz 📷✨
 
-Fotoğrafını çek, yapay zeka çözsün, sana Türkçe anlatsın. %100 ücretsiz (kendi ücretsiz API anahtarınla).
+Fotoğrafını çek, yapay zeka çözsün, sana Türkçe anlatsın. İki yol var: API anahtarsız **Web'de Sor** veya anahtarlı otomatik çözüm.
 
 ## Özellikler
-- 📷 Kamera / 🖼️ Galeri ile soru fotoğrafı
-- 📚 Ders + seviye seçimi (ortaokul/lise/üniversite)
-- 🤖 3 ücretsiz servis: Google Gemini (önerilen), Pollinations, OpenRouter
+- 📷 Kamera / 🖼️ Galeri ile soru fotoğrafı (fotoğraf sonrası sınıf + ders ekranı açılır)
+- 📚 Sınıf (1-12, Üniversite, KPSS/DGS) + ders + seviye seçimi
+- 🌐 Web'de Sor: soru metni hazırlanır, kopyalanır/paylaşılır, Gemini/ChatGPT/Copilot sitesinde cevap alınır, cevap yapıştırılıp kaydedilir (API anahtarı gerekmez, manuel adımdır)
+- 🤖 API ile otomatik çözüm (isteğe bağlı): Google Gemini, Pollinations, OpenRouter
 - 🇹🇷 Adım adım Türkçe anlatım + CEVAP + Kısa Özet
 - 🔊 Sesli anlat (cihaz TTS, ücretsiz), 📋 kopyala, 📤 paylaş
 - 📚 Geçmiş telefonda saklanır
