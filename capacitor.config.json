@@ -1,0 +1,9 @@
+{
+  "appId": "com.murat.sorucozucu",
+  "appName": "SoruCozucu",
+  "webDir": "www",
+  "backgroundColor": "#0f1220",
+  "android": {
+    "backgroundColor": "#0f1220"
+  }
+}

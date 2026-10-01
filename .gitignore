@@ -1,0 +1,18 @@
+# Node
+node_modules/
+
+# Capacitor / Android build çıktıları
+android/app/build/
+android/build/
+android/.gradle/
+android/app/.cxx/
+android/local.properties
+android/capacitor-cordova-android-plugins/build/
+
+# APK'lar Releases üzerinden dağıtılır
+*.apk
+*.aab
+
+# Sistem
+.DS_Store
+Thumbs.db

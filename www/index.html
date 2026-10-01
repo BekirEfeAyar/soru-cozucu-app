@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>SoruÇöz — Fotoğrafını Çek, Çözümü Dinle</title>
+<style>
+:root{--bg:#0f1220;--card:#1a2036;--card2:#232b4a;--acc:#6c8cff;--acc2:#9d7bff;--txt:#eef1ff;--mut:#9aa3c7;--ok:#3ddc84;--err:#ff6b6b;--line:rgba(255,255,255,.09)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:radial-gradient(1200px 600px at 20% -10%,#2a3570 0%,transparent 60%),radial-gradient(900px 500px at 110% 10%,#4a2a7a 0%,transparent 55%),var(--bg);color:var(--txt);min-height:100vh}
+header{position:sticky;top:0;z-index:10;backdrop-filter:blur(12px);background:rgba(15,18,32,.8);border-bottom:1px solid var(--line)}
+.hwrap{max-width:640px;margin:0 auto;padding:14px 16px;display:flex;align-items:center;gap:12px}
+.logo{width:42px;height:42px;border-radius:14px;background:linear-gradient(135deg,var(--acc),var(--acc2));display:grid;place-items:center;font-size:22px;font-weight:800;box-shadow:0 6px 20px rgba(108,140,255,.4)}
+h1{font-size:18px;margin:0}.sub{font-size:12px;color:var(--mut)}
+.iconbtn{margin-left:auto;background:var(--card);border:1px solid var(--line);color:var(--txt);border-radius:12px;padding:9px 12px;font-size:16px;cursor:pointer}
+main{max-width:640px;margin:0 auto;padding:16px 16px 60px}
+.card{background:linear-gradient(180deg,rgba(255,255,255,.05),transparent),var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:14px;box-shadow:0 10px 30px rgba(0,0,0,.3)}
+.card h2{font-size:14px;margin:0 0 10px;color:var(--mut);text-transform:uppercase;letter-spacing:.08em}
+.photobox{border:2px dashed rgba(108,140,255,.4);border-radius:14px;min-height:150px;display:grid;place-items:center;text-align:center;padding:14px;cursor:pointer;background:rgba(108,140,255,.06)}
+.photobox img{max-width:100%;max-height:320px;border-radius:12px;display:block;margin:0 auto}
+.hint{font-size:13px;color:var(--mut);margin-top:8px}
+.btnrow{display:flex;gap:10px;margin-top:12px}
+button{font-family:inherit}
+.btn{flex:1;border:0;border-radius:14px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;color:#fff;background:linear-gradient(135deg,var(--acc),var(--acc2))}
+.btn.ghost{background:var(--card2);border:1px solid var(--line)}
+.btn.small{padding:10px;font-size:13px}
+.btn:disabled{opacity:.6}
+select,textarea,input[type=text],input[type=password]{width:100%;background:#10152a;border:1px solid var(--line);color:var(--txt);border-radius:12px;padding:12px;font-size:15px;outline:none}
+select:focus,textarea:focus,input:focus{border-color:var(--acc)}
+textarea{min-height:70px;resize:vertical}
+label.lbl{font-size:13px;color:var(--mut);display:block;margin:10px 0 6px}
+#result{display:none;white-space:normal;line-height:1.65;font-size:15px}
+#result.show{display:block}
+#result h3{margin:.6em 0 .3em;font-size:16px}
+#result ul,#result ol{padding-left:20px}
+#result code{background:#0b0f22;padding:2px 6px;border-radius:6px;font-size:13.5px}
+#result pre{background:#0b0f22;padding:12px;border-radius:12px;overflow:auto}
+.badge{display:inline-block;font-size:12px;background:rgba(61,220,132,.15);color:var(--ok);border:1px solid rgba(61,220,132,.35);padding:4px 10px;border-radius:999px;margin-bottom:8px}
+.answerbox{background:linear-gradient(135deg,rgba(61,220,132,.18),rgba(108,140,255,.15));border:1px solid rgba(61,220,132,.4);border-radius:12px;padding:12px;margin-top:12px;font-weight:700}
+.loading{display:flex;gap:10px;align-items:center;color:var(--mut)}
+.spin{width:20px;height:20px;border-radius:50%;border:3px solid rgba(255,255,255,.2);border-top-color:var(--acc);animation:sp 1s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.hist-item{background:#10152a;border:1px solid var(--line);border-radius:12px;padding:10px;margin-top:8px;display:flex;gap:10px;align-items:center;cursor:pointer}
+.hist-item img{width:48px;height:48px;object-fit:cover;border-radius:8px}
+.hist-item .t{font-size:13px}.hist-item .d{font-size:11px;color:var(--mut)}
+.del{background:none;border:0;color:var(--err);font-size:18px;cursor:pointer;margin-left:auto}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;place-items:center;padding:16px;z-index:50}
+.modal.open{display:grid}
+.sheet{background:var(--card);border:1px solid var(--line);border-radius:18px;max-width:520px;width:100%;padding:18px;max-height:90vh;overflow:auto}
+.sheet h3{margin:0 0 8px}
+.kutu{background:#10152a;border:1px solid var(--line);border-radius:12px;padding:10px;font-size:13px;color:var(--mut);margin-top:8px}
+.kutu a{color:var(--acc)}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.err{background:rgba(255,107,107,.12);border:1px solid rgba(255,107,107,.4);border-radius:12px;padding:10px;font-size:13px;color:#ffc9c9;display:none;margin-top:10px}
+.err.show{display:block}
+footer{max-width:640px;margin:0 auto;padding:0 16px 30px;color:var(--mut);font-size:12px;text-align:center}
+a{color:var(--acc)}
+.hidden{display:none!important}
+</style>
+</head>
+<body>
+<header><div class="hwrap">
+<div class="logo">✓</div>
+<div><h1>SoruÇöz</h1><div class="sub">Fotoğrafı çek → yapay zeka çözsün → sana anlatsın • %100 ücretsiz</div></div>
+<button class="iconbtn" id="openSettings" title="Ayarlar">⚙️</button>
+</div></header>
+
+<main>
+<div class="card">
+<h2>1 • Soru fotoğrafı</h2>
+<div class="photobox" id="photoBox">
+<div id="photoEmpty"><div style="font-size:38px">📷</div><div><b>Fotoğraf ekle</b></div><div class="hint">Dokun → Kamera veya Galeri seç<br>Soru net görünsün, flaş parlamasın</div></div>
+<img id="preview" class="hidden" alt="soru">
+</div>
+<div class="btnrow">
+<button class="btn ghost" id="btnCamera">📷 Kamera</button>
+<button class="btn ghost" id="btnGallery">🖼️ Galeri</button>
+<button class="btn ghost hidden" id="btnClearImg" style="flex:0 0 52px">✕</button>
+</div>
+<input type="file" id="fileCam" accept="image/*" capture="environment" class="hidden">
+<input type="file" id="fileGal" accept="image/*" class="hidden">
+<div class="hint" id="imgInfo"></div>
+</div>
+
+<div class="card">
+<h2>2 • Sınıf + Ders + ek not</h2>
+<label class="lbl">Sınıf</label>
+<select id="sinif">
+<option>1. Sınıf</option><option>2. Sınıf</option><option>3. Sınıf</option><option>4. Sınıf</option>
+<option>5. Sınıf</option><option>6. Sınıf</option><option>7. Sınıf</option><option>8. Sınıf</option>
+<option selected>9. Sınıf</option><option>10. Sınıf</option><option>11. Sınıf</option><option>12. Sınıf</option>
+<option>Üniversite</option><option>KPSS / DGS</option><option>Diğer</option>
+</select>
+<label class="lbl">Ders</label>
+<select id="ders">
+<option>Matematik</option><option>Fizik</option><option>Kimya</option>
+<option>Biyoloji</option><option>Türkçe</option><option>Edebiyat</option>
+<option>Tarih</option><option>Coğrafya</option><option>İngilizce</option>
+<option>Felsefe</option><option>Din Kültürü</option><option selected>Genel</option>
+</select>
+<label class="lbl">Ek metin (opsiyonel — şıklar, kendi yazdığın soru)</label>
+<textarea id="ekmetin" placeholder="Örn: Soru: 2x+3=11 ise x kaç? Şıklar A)2 B)4 C)5 ..."></textarea>
+<label class="lbl">Anlatım seviyesi</label>
+<select id="seviye">
+<option value="ortaokul">Ortaokul — basit anlat</option>
+<option value="lise" selected>Lise — detaylı anlat</option>
+<option value="universite">Üniversite — formüllü anlat</option>
+</select>
+</div>
+
+<div class="card">
+<h2>3 • Çöz</h2>
+<button class="btn" id="btnSolve">✨ ÇÖZÜMÜ GETİR</button>
+<div class="err" id="err"></div>
+<div style="margin-top:14px" id="loading" class="loading hidden"><div class="spin"></div><div id="loadingTxt">Yapay zekaya gönderiliyor...</div></div>
+<div id="result"></div>
+<div class="row hidden" id="afterBtns">
+<button class="btn ghost small" id="btnSpeak">🔊 Sesli Anlat</button>
+<button class="btn ghost small" id="btnCopy">📋 Kopyala</button>
+<button class="btn ghost small" id="btnShare">📤 Paylaş</button>
+<button class="btn ghost small" id="btnNew">➕ Yeni Soru</button>
+</div>
+</div>
+
+<div class="card">
+<h2>📚 Geçmiş</h2>
+<div id="histList"><div class="hint">Henüz çözüm yok. Çözdükçe burada saklanır (telefonda).</div></div>
+<div class="row"><button class="btn ghost small" id="btnClearHist">Geçmişi temizle</button></div>
+</div>
+</main>
+
+<div class="modal" id="settingsModal">
+<div class="sheet">
+<h3>⚙️ Yapay Zeka Ayarı (ücretsiz)</h3>
+<div style="font-size:13px;color:var(--mut)">Uygulamanın kendisi ücretsiz. Çözüm için <b>ücretsiz bir API anahtarı</b> girmen yeterli (1 dakikalık iş, bir kez yapılır).</div>
+<label class="lbl">Servis</label>
+<select id="provider">
+<option value="gemini">Google Gemini (önerilen • ücretsiz)</option>
+<option value="pollinations">Pollinations (ücretsiz)</option>
+<option value="openrouter">OpenRouter (ücretsiz :free modeller)</option>
+</select>
+<label class="lbl">API Anahtarı</label>
+<input type="password" id="apikey" placeholder="Anahtarını buraya yapıştır">
+<label class="lbl">Model (uzman değilsen değiştirme)</label>
+<input type="text" id="model" placeholder="model adı">
+<div class="kutu" id="keyHelp"></div>
+<div class="row">
+<button class="btn small" id="btnSaveSettings" style="flex:1">💾 Kaydet</button>
+<button class="btn ghost small" id="btnCloseSettings">Kapat</button>
+</div>
+<div class="row">
+<button class="btn ghost small" id="btnTest">🔌 Bağlantıyı Test Et</button>
+</div>
+<div class="hint" id="saveInfo"></div>
+</div>
+</div>
+
+<div class="modal" id="choiceModal">
+<div class="sheet">
+<h3>📝 Sınıf ve Ders Seç</h3>
+<div style="font-size:13px;color:var(--mut)">Sorun hazır. Çözmeden önce sınıf ve dersi seç.</div>
+<label class="lbl">Sınıf</label>
+<select id="sinifM">
+<option>1. Sınıf</option><option>2. Sınıf</option><option>3. Sınıf</option><option>4. Sınıf</option>
+<option>5. Sınıf</option><option>6. Sınıf</option><option>7. Sınıf</option><option>8. Sınıf</option>
+<option selected>9. Sınıf</option><option>10. Sınıf</option><option>11. Sınıf</option><option>12. Sınıf</option>
+<option>Üniversite</option><option>KPSS / DGS</option><option>Diğer</option>
+</select>
+<label class="lbl">Ders</label>
+<select id="dersM">
+<option>Matematik</option><option>Fizik</option><option>Kimya</option>
+<option>Biyoloji</option><option>Türkçe</option><option>Edebiyat</option>
+<option>Tarih</option><option>Coğrafya</option><option>İngilizce</option>
+<option>Felsefe</option><option>Din Kültürü</option><option selected>Genel</option>
+</select>
+<div class="row">
+<button class="btn small" id="btnChoiceOk" style="flex:1">✅ Devam Et</button>
+<button class="btn ghost small" id="btnChoiceClose">Kapat</button>
+</div>
+</div>
+</div>
+
+<footer>📱 SoruÇöz v1.1 • İnternet gerekli (yapay zeka için) • Veriler sadece telefonunda saklanır<br>Ücretsiz anahtarlar: aistudio.google.com • enter.pollinations.ai • openrouter.ai</footer>
+
+<script>
+const $=id=>document.getElementById(id);
+const LS={get:(k,d)=>{try{const v=localStorage.getItem(k);return v===null?d:v}catch(e){return d}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}},del:k=>{try{localStorage.removeItem(k)}catch(e){}}};
+const DEFAULT_MODELS={gemini:"gemini-2.0-flash",pollinations:"openai/gpt-5.4-nano",openrouter:"google/gemini-2.0-flash-exp:free"};
+const HELP={
+gemini:'<b>Gemini ücretsiz key (1 dk):</b><br>1) <a href="https://aistudio.google.com/apikey" target="_blank">aistudio.google.com/apikey</a> adresine git<br>2) Google hesabınla giriş yap → <b>Create API key</b><br>3) Anahtarı kopyala, buraya yapıştır, Kaydet.<br>Limit: ücretsiz kotayla günde onlarca soru.',
+pollinations:'<b>Pollinations key:</b><br>1) <a href="https://enter.pollinations.ai/keys" target="_blank">enter.pollinations.ai/keys</a> → ücretsiz hesap aç<br>2) Yeni key oluştur, buraya yapıştır.<br>Model önerisi: <b>openai/gpt-5.4-nano</b> veya <b>google/gemini-3-flash-preview</b>',
+openrouter:'<b>OpenRouter key:</b><br>1) <a href="https://openrouter.ai/keys" target="_blank">openrouter.ai/keys</a> → hesap aç<br>2) Key al, buraya yapıştır.<br>Model kutusuna <b>google/gemini-2.0-flash-exp:free</b> yaz (ücretsiz).'};
+let imgDataUrl=null,imgMime="image/jpeg",lastAnswer="";
+
+function refreshHelp(){const p=$("provider").value;$("keyHelp").innerHTML=HELP[p]||"";if(!$("model").value)$("model").value=DEFAULT_MODELS[p]||"";}
+function loadSettings(){$("provider").value=LS.get("sq_provider","gemini");$("apikey").value=LS.get("sq_key","");$("model").value=LS.get("sq_model","")||DEFAULT_MODELS[$("provider").value];refreshHelp();
+const k=LS.get("sq_key","");if(k)$("saveInfo").textContent="✅ Kayıtlı anahtar var ("+$("provider").value+" • "+($("model").value||"varsayılan model")+")";else $("saveInfo").textContent="⚠️ Henüz anahtar girilmedi. Yukarıdaki 1 dakikalık adımla alıp kaydet.";}
+$("openSettings").onclick=()=>{loadSettings();$("settingsModal").classList.add("open")};
+$("btnCloseSettings").onclick=()=>$("settingsModal").classList.remove("open");
+$("settingsModal").addEventListener("click",e=>{if(e.target===$("settingsModal"))$("settingsModal").classList.remove("open")});
+$("provider").onchange=()=>{$("model").value=DEFAULT_MODELS[$("provider").value]||"";refreshHelp()};
+$("btnSaveSettings").onclick=()=>{LS.set("sq_provider",$("provider").value);LS.set("sq_key",$("apikey").value.trim());LS.set("sq_model",$("model").value.trim());$("saveInfo").textContent="✅ Kaydedildi.";setTimeout(()=>$("settingsModal").classList.remove("open"),600)};
+
+// Sınıf + Ders seçim ekranı (fotoğraf sonrası açılır)
+function loadChoice(){const s=LS.get("sq_sinif","9. Sınıf"),d=LS.get("sq_ders","Genel");
+if($("sinif"))$("sinif").value=LS.get("sq_sinif","9. Sınıf");
+if($("ders"))$("ders").value=d;
+$("sinifM").value=s;$("dersM").value=d;}
+function openChoice(){loadChoice();$("choiceModal").classList.add("open");}
+function closeChoice(){$("choiceModal").classList.remove("open");}
+$("btnChoiceClose").onclick=closeChoice;
+$("choiceModal").addEventListener("click",e=>{if(e.target===$("choiceModal"))closeChoice()});
+$("btnChoiceOk").onclick=()=>{LS.set("sq_sinif",$("sinifM").value);LS.set("sq_ders",$("dersM").value);
+if($("sinif"))$("sinif").value=$("sinifM").value;if($("ders"))$("ders").value=$("dersM").value;
+closeChoice();hideErr();$("imgInfo").textContent="✅ Fotoğraf hazır ("+$("sinifM").value+" • "+$("dersM").value+"). ÇÖZ'e bas.";
+document.querySelectorAll(".card")[2].scrollIntoView({behavior:"smooth"});};
+if($("sinif"))$("sinif").onchange=e=>LS.set("sq_sinif",e.target.value);
+if($("ders"))$("ders").onchange=e=>LS.set("sq_ders",e.target.value);
+loadChoice();
+
+$("photoBox").onclick=()=>$("fileGal").click();
+$("btnGallery").onclick=e=>{e.stopPropagation();$("fileGal").click()};
+$("btnCamera").onclick=e=>{e.stopPropagation();$("fileCam").click()};
+function handleFile(f){if(!f)return;if(!f.type.startsWith("image/")){showErr("Bu dosya resim değil.");return}
+const rd=new FileReader();rd.onload=()=>{const img=new Image();img.onload=()=>{
+let w=img.width,h=img.height;const MAX=1280;const s=Math.min(1,MAX/Math.max(w,h));w=Math.round(w*s);h=Math.round(h*s);
+const c=document.createElement("canvas");c.width=w;c.height=h;const ctx=c.getContext("2d");ctx.drawImage(img,0,0,w,h);
+imgDataUrl=c.toDataURL("image/jpeg",0.82);imgMime="image/jpeg";
+$("preview").src=imgDataUrl;$("preview").classList.remove("hidden");$("photoEmpty").classList.add("hidden");$("btnClearImg").classList.remove("hidden");
+$("imgInfo").textContent="✅ Fotoğraf hazır. Sınıf ve ders seç.";hideErr();openChoice();};img.src=rd.result;};rd.readAsDataURL(f);}
+$("fileGal").onchange=e=>handleFile(e.target.files[0]);
+$("fileCam").onchange=e=>handleFile(e.target.files[0]);
+$("btnClearImg").onclick=e=>{e.stopPropagation();imgDataUrl=null;$("preview").src="";$("preview").classList.add("hidden");$("photoEmpty").classList.remove("hidden");$("btnClearImg").classList.add("hidden");$("imgInfo").textContent="";$("fileGal").value="";$("fileCam").value=""};
+
+function showErr(t){const e=$("err");e.textContent=t;e.classList.add("show")}
+function hideErr(){$("err").classList.remove("show")}
+function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}
+function md(t){let h=esc(t);
+h=h.replace(/^### (.*)$/gm,"<h3>$1</h3>").replace(/^## (.*)$/gm,"<h3>$1</h3>").replace(/^# (.*)$/gm,"<h3>$1</h3>");
+h=h.replace(/\*\*(.+?)\*\*/g,"<b>$1</b>");
+h=h.replace(/`([^`]+)`/g,"<code>$1</code>");
+h=h.replace(/^\s*[-*] (.*)$/gm,"<li>$1</li>");h=h.replace(/(<li>.*<\/li>)/s,"<ul>$1</ul>");
+h=h.replace(/^\s*\d+\. (.*)$/gm,"<li>$1</li>");
+h=h.replace(/\n{2,}/g,"<br><br>").replace(/\n/g,"<br>");
+const m=t.match(/CEVAP\s*[:：]\s*(.+)/i);let ans="";if(m){ans=m[1].trim().split("\n")[0];}
+return {html:h,ans};}
+
+function buildPrompt(){const sinif=($("sinif")&&$("sinif").value)||LS.get("sq_sinif","9. Sınıf"),ders=($("ders")&&$("ders").value)||LS.get("sq_ders","Genel"),ek=$("ekmetin").value.trim(),sev=$("seviye").value;
+let s=sev==="ortaokul"?"ortaokul öğrencisine çok basit Türkçe ile":sev==="universite"?"üniversite öğrencisine formüllü ve detaylı Türkçe ile":"lise öğrencisine açık ve detaylı Türkçe ile";
+return "Sen sabırlı bir öğretmensin. Ekteki soru fotoğrafını ve ek metni "+s+" adım adım çöz ve anlat.\nSınıf: "+sinif+".\nDers: "+ders+".\nEk not/sorunun yazısı: "+(ek||"(yok, fotoğrafa bak)")+".\nKurallar:\n1) Önce soruyu kendi cümlelerinle kısaca özetle.\n2) "+sinif+" seviyesine uygun, adım adım çözüm yap, formülleri açıkla.\n3) En sonda ayrı bir satırda CEVAP: ... yaz.\n4) Son olarak 'Kısa Özet' ver.\n5) Cevabın tamamı Türkçe olsun.";}
+
+function b64clean(){if(!imgDataUrl)return null;return imgDataUrl.split(",")[1];}
+
+async function callGemini(key,model,prompt){const data=b64clean();
+const parts=[{text:prompt}];if(data)parts.push({inline_data:{mime_type:imgMime,data:data}});
+const r=await fetch("https://generativelanguage.googleapis.com/v1beta/models/"+encodeURIComponent(model)+":generateContent?key="+encodeURIComponent(key),{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({contents:[{parts:parts}],generationConfig:{temperature:0.4,maxOutputTokens:2048}})});
+const j=await r.json().catch(()=>({}));if(!r.ok)throw new Error(j?.error?.message||("Gemini hatası ("+r.status+")"));
+const txt=(j.candidates?.[0]?.content?.parts||[]).map(p=>p.text||"").join("").trim();if(!txt)throw new Error("Gemini boş cevap verdi.");return txt;}
+
+async function callOpenAICompat(url,key,model,prompt,extra){const data=b64clean();
+const content=[{type:"text",text:prompt}];if(data)content.push({type:"image_url",image_url:{url:"data:"+imgMime+";base64,"+data,detail:"high"}});
+const headers=Object.assign({"Content-Type":"application/json","Authorization":"Bearer "+key},extra||{});
+const r=await fetch(url,{method:"POST",headers:headers,body:JSON.stringify({model:model,messages:[{role:"user",content:content}],temperature:0.4,max_tokens:2000})});
+const j=await r.json().catch(()=>({}));if(!r.ok){const m=j?.error?.message||j?.message||("Hata "+r.status);throw new Error(m);}
+const txt=j?.choices?.[0]?.message?.content||"";if(!txt)throw new Error("Boş cevap geldi.");return txt;}
+
+$("btnSolve").onclick=async()=>{
+hideErr();const ek=$("ekmetin").value.trim();
+if(!imgDataUrl&&!ek){showErr("Önce soru fotoğrafı ekle ya da Ek metin kutusuna soruyu yaz.");return;}
+const provider=LS.get("sq_provider","gemini");let key=LS.get("sq_key","");let model=LS.get("sq_model","")||DEFAULT_MODELS[provider];
+if(!key){loadSettings();$("settingsModal").classList.add("open");showErr("Önce ⚙️ Ayarlar'dan ücretsiz API anahtarını girmen lazım (1 dk). Yardım kutusuna bak.");return;}
+$("btnSolve").disabled=true;$("loading").classList.remove("hidden");$("result").classList.remove("show");$("afterBtns").classList.add("hidden");
+$("loadingTxt").textContent="Yapay zekaya gönderiliyor ("+provider+" • "+model+")...";
+try{const prompt=buildPrompt();let txt="";
+if(provider==="gemini")txt=await callGemini(key,model,prompt);
+else if(provider==="pollinations")txt=await callOpenAICompat("https://gen.pollinations.ai/v1/chat/completions",key,model,prompt);
+else txt=await callOpenAICompat("https://openrouter.ai/api/v1/chat/completions",key,model,prompt,{"HTTP-Referer":"https://sorucoz.app","X-Title":"SoruCoz"});
+lastAnswer=txt;const {html,ans}=md(txt);
+const sinifLbl=(($("sinif")&&$("sinif").value)||LS.get("sq_sinif","")),dersLbl=(($("ders")&&$("ders").value)||LS.get("sq_ders","Genel"));
+$("result").innerHTML='<span class="badge">✅ Çözüm hazır • '+esc(sinifLbl+" • "+dersLbl)+'</span><div>'+html+'</div>'+(ans?'<div class="answerbox">🏁 '+esc(ans)+'</div>':"");
+$("result").classList.add("show");$("afterBtns").classList.remove("hidden");
+saveHist(txt);
+}catch(e){showErr("Çözülemedi: "+e.message+" — Anahtarın doğru mu? ⚙️'dan test et. İnternetin açık mı?");}
+$("btnSolve").disabled=false;$("loading").classList.add("hidden");};
+
+$("btnTest").onclick=async()=>{const p=$("provider").value,k=$("apikey").value.trim(),m=$("model").value.trim()||DEFAULT_MODELS[p];
+if(!k){$("saveInfo").textContent="Önce anahtarı yapıştır.";return;}$("saveInfo").textContent="Test ediliyor...";
+try{let t="";if(p==="gemini")t=await callGemini(k,m,"Test: sadece 'bağlantı ok' yaz.");else if(p==="pollinations")t=await callOpenAICompat("https://gen.pollinations.ai/v1/chat/completions",k,m,"Test: sadece 'bağlantı ok' yaz.");else t=await callOpenAICompat("https://openrouter.ai/api/v1/chat/completions",k,m,"Test: sadece 'bağlantı ok' yaz.",{"HTTP-Referer":"https://sorucoz.app","X-Title":"SoruCoz"});
+$("saveInfo").textContent="✅ Bağlantı ok! Cevap: "+t.slice(0,80);}catch(e){$("saveInfo").textContent="❌ Olmadı: "+e.message;}};
+
+function saveHist(answer){try{const h=JSON.parse(LS.get("sq_hist","[]"));h.unshift({t:Date.now(),sinif:(($("sinif")&&$("sinif").value)||LS.get("sq_sinif","")),ders:(($("ders")&&$("ders").value)||LS.get("sq_ders","Genel")),ek:$("ekmetin").value.trim().slice(0,120),thumb:imgDataUrl,ans:answer.slice(0,4000)});while(h.length>30)h.pop();LS.set("sq_hist",JSON.stringify(h));renderHist();}catch(e){}}
+function renderHist(){const box=$("histList");let h=[];try{h=JSON.parse(LS.get("sq_hist","[]"))}catch(e){}if(!h.length){box.innerHTML='<div class="hint">Henüz çözüm yok. Çözdükçe burada saklanır (telefonda).</div>';return;}
+box.innerHTML="";h.forEach((it,i)=>{const d=document.createElement("div");d.className="hist-item";
+d.innerHTML=(it.thumb?'<img src="'+it.thumb+'">':"")+'<div><div class="t"><b>'+esc((it.sinif?it.sinif+" • ":"")+it.ders)+'</b> • '+new Date(it.t).toLocaleString("tr-TR")+'</div><div class="d">'+esc((it.ek||it.ans||"").slice(0,80))+'</div></div><button class="del">×</button>';
+d.onclick=e=>{if(e.target.className==="del"){h.splice(i,1);LS.set("sq_hist",JSON.stringify(h));renderHist();return;}
+lastAnswer=it.ans;const {html,ans}=md(it.ans);$("result").innerHTML='<span class="badge">📚 Geçmişten</span><div>'+html+'</div>';$("result").classList.add("show");$("afterBtns").classList.remove("hidden");window.scrollTo({top:0,behavior:"smooth"});document.querySelectorAll(".card")[2].scrollIntoView();};
+box.appendChild(d);});}
+$("btnClearHist").onclick=()=>{LS.del("sq_hist");renderHist()};
+$("btnNew").onclick=()=>{imgDataUrl=null;$("preview").src="";$("preview").classList.add("hidden");$("photoEmpty").classList.remove("hidden");$("btnClearImg").classList.add("hidden");$("ekmetin").value="";$("result").classList.remove("show");$("afterBtns").classList.add("hidden");hideErr();window.scrollTo({top:0,behavior:"smooth"})};
+$("btnCopy").onclick=async()=>{try{await navigator.clipboard.writeText(lastAnswer);$("btnCopy").textContent="✅ Kopyalandı"}catch(e){const ta=document.createElement("textarea");ta.value=lastAnswer;document.body.appendChild(ta);ta.select();document.execCommand("copy");ta.remove();}setTimeout(()=>$("btnCopy").textContent="📋 Kopyala",1500)};
+$("btnShare").onclick=async()=>{if(navigator.share){try{await navigator.share({title:"SoruÇöz",text:lastAnswer})}catch(e){}}else{$("btnCopy").click()}};
+$("btnSpeak").onclick=()=>{try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(lastAnswer.replace(/[#*`]/g,""));u.lang="tr-TR";speechSynthesis.speak(u);}catch(e){showErr("Sesli okuma bu cihazda desteklenmiyor.")}};
+renderHist();
+</script>
+</body>
+</html>
