@@ -208,12 +208,12 @@ a{color:var(--acc)}
 </div>
 </div>
 
-<footer>📱 SoruÇöz v1.3 • Sınıfa göre ders listesi • API'siz Web'de Sor desteklenir • Veriler sadece telefonunda saklanır<br>Web: gemini.google.com • chat.openai.com • copilot.microsoft.com</footer>
+<footer>📱 SoruÇöz v1.3.1 • Sınıfa göre ders listesi • API'siz Web'de Sor desteklenir • Veriler sadece telefonunda saklanır<br>Web: gemini.google.com • chat.openai.com • copilot.microsoft.com</footer>
 
 <script>
 const $=id=>document.getElementById(id);
 const LS={get:(k,d)=>{try{const v=localStorage.getItem(k);return v===null?d:v}catch(e){return d}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}},del:k=>{try{localStorage.removeItem(k)}catch(e){}}};
-const DEFAULT_MODELS={gemini:"gemini-2.0-flash",pollinations:"openai/gpt-5.4-nano",openrouter:"google/gemini-2.0-flash-exp:free"};
+const DEFAULT_MODELS={gemini:"gemini-3.8-flash",pollinations:"openai/gpt-5.4-nano",openrouter:"google/gemini-2.0-flash-exp:free"};
 const HELP={
 gemini:'<b>Gemini ücretsiz key (1 dk):</b><br>1) <a href="https://aistudio.google.com/apikey" target="_blank">aistudio.google.com/apikey</a> adresine git<br>2) Google hesabınla giriş yap → <b>Create API key</b><br>3) Anahtarı kopyala, buraya yapıştır, Kaydet.<br>Limit: ücretsiz kotayla günde onlarca soru.',
 pollinations:'<b>Pollinations key:</b><br>1) <a href="https://enter.pollinations.ai/keys" target="_blank">enter.pollinations.ai/keys</a> → ücretsiz hesap aç<br>2) Yeni key oluştur, buraya yapıştır.<br>Model önerisi: <b>openai/gpt-5.4-nano</b> veya <b>google/gemini-3-flash-preview</b>',
@@ -268,6 +268,7 @@ closeChoice();hideErr();$("imgInfo").textContent="✅ Fotoğraf hazır ("+$("sin
 $("webCard").scrollIntoView({behavior:"smooth"});};
 if($("sinif"))$("sinif").onchange=e=>{LS.set("sq_sinif",e.target.value);LS.set("sq_ders",doldurDersler("sinif","ders",$("ders").value));};
 if($("sinifM"))$("sinifM").onchange=()=>{doldurDersler("sinifM","dersM",$("dersM").value);};
+if(LS.get("sq_provider","gemini")==="gemini"&&LS.get("sq_model","")==="gemini-2.0-flash")LS.set("sq_model",DEFAULT_MODELS.gemini);
 if($("ders"))$("ders").onchange=e=>LS.set("sq_ders",e.target.value);
 loadChoice();
 
