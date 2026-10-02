@@ -95,10 +95,10 @@ a{color:var(--acc)}
 </select>
 <label class="lbl">Ders</label>
 <select id="ders">
-<option>Matematik</option><option>Fizik</option><option>Kimya</option>
-<option>Biyoloji</option><option>Türkçe</option><option>Edebiyat</option>
-<option>Tarih</option><option>Coğrafya</option><option>İngilizce</option>
-<option>Felsefe</option><option>Din Kültürü</option><option selected>Genel</option>
+<option>Türkçe</option><option>Edebiyat</option><option>Matematik</option>
+<option>Fizik</option><option>Kimya</option><option>Biyoloji</option>
+<option>Tarih</option><option>Coğrafya</option><option>Felsefe</option>
+<option>İngilizce</option><option>Din Kültürü</option>
 </select>
 <label class="lbl">Ek metin (opsiyonel — şıklar, kendi yazdığın soru)</label>
 <textarea id="ekmetin" placeholder="Örn: Soru: 2x+3=11 ise x kaç? Şıklar A)2 B)4 C)5 ..."></textarea>
@@ -196,10 +196,10 @@ a{color:var(--acc)}
 </select>
 <label class="lbl">Ders</label>
 <select id="dersM">
-<option>Matematik</option><option>Fizik</option><option>Kimya</option>
-<option>Biyoloji</option><option>Türkçe</option><option>Edebiyat</option>
-<option>Tarih</option><option>Coğrafya</option><option>İngilizce</option>
-<option>Felsefe</option><option>Din Kültürü</option><option selected>Genel</option>
+<option>Türkçe</option><option>Edebiyat</option><option>Matematik</option>
+<option>Fizik</option><option>Kimya</option><option>Biyoloji</option>
+<option>Tarih</option><option>Coğrafya</option><option>Felsefe</option>
+<option>İngilizce</option><option>Din Kültürü</option>
 </select>
 <div class="row">
 <button class="btn small" id="btnChoiceOk" style="flex:1">✅ Devam Et</button>
@@ -208,7 +208,7 @@ a{color:var(--acc)}
 </div>
 </div>
 
-<footer>📱 SoruÇöz v1.2 • API'siz Web'de Sor desteklenir • Veriler sadece telefonunda saklanır<br>Web: gemini.google.com • chat.openai.com • copilot.microsoft.com</footer>
+<footer>📱 SoruÇöz v1.3 • Sınıfa göre ders listesi • API'siz Web'de Sor desteklenir • Veriler sadece telefonunda saklanır<br>Web: gemini.google.com • chat.openai.com • copilot.microsoft.com</footer>
 
 <script>
 const $=id=>document.getElementById(id);
@@ -229,20 +229,45 @@ $("settingsModal").addEventListener("click",e=>{if(e.target===$("settingsModal")
 $("provider").onchange=()=>{$("model").value=DEFAULT_MODELS[$("provider").value]||"";refreshHelp()};
 $("btnSaveSettings").onclick=()=>{LS.set("sq_provider",$("provider").value);LS.set("sq_key",$("apikey").value.trim());LS.set("sq_model",$("model").value.trim());$("saveInfo").textContent="✅ Kaydedildi.";setTimeout(()=>$("settingsModal").classList.remove("open"),600)};
 
+// Sınıfa göre ders listesi (fotoğraf sonrası açılan ekranda da, ana kartta da aynı liste)
+const DERSLER={
+"1. Sınıf":["Türkçe","Matematik","Hayat Bilgisi"],
+"2. Sınıf":["Türkçe","Matematik","Hayat Bilgisi","İngilizce"],
+"3. Sınıf":["Türkçe","Matematik","Hayat Bilgisi","Fen Bilimleri","İngilizce"],
+"4. Sınıf":["Türkçe","Matematik","Fen Bilimleri","Sosyal Bilgiler","İngilizce","Din Kültürü"],
+"5. Sınıf":["Türkçe","Matematik","Fen Bilimleri","Sosyal Bilgiler","İngilizce","Din Kültürü"],
+"6. Sınıf":["Türkçe","Matematik","Fen Bilimleri","Sosyal Bilgiler","İngilizce","Din Kültürü"],
+"7. Sınıf":["Türkçe","Matematik","Fen Bilimleri","Sosyal Bilgiler","İngilizce","Din Kültürü"],
+"8. Sınıf":["Türkçe","Matematik","Fen Bilimleri","T.C. İnkılap Tarihi","Din Kültürü","İngilizce"],
+"9. Sınıf":["Türkçe","Edebiyat","Matematik","Fizik","Kimya","Biyoloji","Tarih","Coğrafya","Felsefe","İngilizce","Din Kültürü"],
+"10. Sınıf":["Türkçe","Edebiyat","Matematik","Fizik","Kimya","Biyoloji","Tarih","Coğrafya","Felsefe","İngilizce","Din Kültürü"],
+"11. Sınıf":["Türkçe","Edebiyat","Matematik","Fizik","Kimya","Biyoloji","Tarih","Coğrafya","Felsefe","İngilizce","Din Kültürü"],
+"12. Sınıf":["Türkçe","Edebiyat","Matematik","Fizik","Kimya","Biyoloji","Tarih","Coğrafya","Felsefe","İngilizce","Din Kültürü"],
+"Üniversite":["Türkçe","Edebiyat","Matematik","Fizik","Kimya","Biyoloji","Tarih","Coğrafya","Felsefe","İngilizce","Genel"],
+"KPSS / DGS":["Türkçe","Matematik","Tarih","Coğrafya","Vatandaşlık","İngilizce","Genel"],
+"Diğer":["Türkçe","Edebiyat","Matematik","Fizik","Kimya","Biyoloji","Tarih","Coğrafya","Felsefe","İngilizce","Din Kültürü","Genel"]};
+function dersListesi(sinif){return DERSLER[sinif]||DERSLER["Diğer"];}
+function doldurDersler(sinifId,dersId,korunacak){const liste=dersListesi($(sinifId).value);const sel=$(dersId);
+sel.innerHTML="";liste.forEach(d=>{const o=document.createElement("option");o.textContent=d;sel.appendChild(o);});
+sel.value=liste.includes(korunacak)?korunacak:liste[0];return sel.value;}
+
 // Sınıf + Ders seçim ekranı (fotoğraf sonrası açılır)
-function loadChoice(){const s=LS.get("sq_sinif","9. Sınıf"),d=LS.get("sq_ders","Genel");
-if($("sinif"))$("sinif").value=LS.get("sq_sinif","9. Sınıf");
-if($("ders"))$("ders").value=d;
-$("sinifM").value=s;$("dersM").value=d;}
+function loadChoice(){const s=LS.get("sq_sinif","9. Sınıf"),kayitli=LS.get("sq_ders","");
+if($("sinif"))$("sinif").value=s;
+const ana=doldurDersler("sinif","ders",kayitli);
+$("sinifM").value=s;doldurDersler("sinifM","dersM",kayitli);
+LS.set("sq_ders",ana);}
 function openChoice(){loadChoice();$("choiceModal").classList.add("open");}
 function closeChoice(){$("choiceModal").classList.remove("open");}
 $("btnChoiceClose").onclick=closeChoice;
 $("choiceModal").addEventListener("click",e=>{if(e.target===$("choiceModal"))closeChoice()});
 $("btnChoiceOk").onclick=()=>{LS.set("sq_sinif",$("sinifM").value);LS.set("sq_ders",$("dersM").value);
-if($("sinif"))$("sinif").value=$("sinifM").value;if($("ders"))$("ders").value=$("dersM").value;
+if($("sinif"))$("sinif").value=$("sinifM").value;
+if($("ders")){doldurDersler("sinif","ders",$("dersM").value);$("ders").value=$("dersM").value;}
 closeChoice();hideErr();$("imgInfo").textContent="✅ Fotoğraf hazır ("+$("sinifM").value+" • "+$("dersM").value+"). 3. adımdan Web'de Sor'a geç.";
 $("webCard").scrollIntoView({behavior:"smooth"});};
-if($("sinif"))$("sinif").onchange=e=>LS.set("sq_sinif",e.target.value);
+if($("sinif"))$("sinif").onchange=e=>{LS.set("sq_sinif",e.target.value);LS.set("sq_ders",doldurDersler("sinif","ders",$("ders").value));};
+if($("sinifM"))$("sinifM").onchange=()=>{doldurDersler("sinifM","dersM",$("dersM").value);};
 if($("ders"))$("ders").onchange=e=>LS.set("sq_ders",e.target.value);
 loadChoice();
 

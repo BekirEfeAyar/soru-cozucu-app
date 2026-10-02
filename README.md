@@ -4,7 +4,7 @@ Fotoğrafını çek, yapay zeka çözsün, sana Türkçe anlatsın. İki yol var
 
 ## Özellikler
 - 📷 Kamera / 🖼️ Galeri ile soru fotoğrafı (fotoğraf sonrası sınıf + ders ekranı açılır)
-- 📚 Sınıf (1-12, Üniversite, KPSS/DGS) + ders + seviye seçimi
+- 📚 Sınıf (1-12, Üniversite, KPSS/DGS) + sınıfa göre değişen ders listesi (örn. 8. sınıfta Türkçe, Matematik, Fen Bilimleri, T.C. İnkılap Tarihi, Din Kültürü, İngilizce) + seviye seçimi
 - 🌐 Web'de Sor: soru metni hazırlanır, kopyalanır/paylaşılır, Gemini/ChatGPT/Copilot sitesinde cevap alınır, cevap yapıştırılıp kaydedilir (API anahtarı gerekmez, manuel adımdır)
 - 🤖 API ile otomatik çözüm (isteğe bağlı): Google Gemini, Pollinations, OpenRouter
 - 🇹🇷 Adım adım Türkçe anlatım + CEVAP + Kısa Özet
